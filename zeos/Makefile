@@ -91,7 +91,7 @@ system: system.o system.lds $(SYSOBJ)
 	$(LD) $(LDFLAGS) -T system.lds -o $@ $< $(SYSOBJ) $(LIBZEOS)
 
 user: user.o user.lds $(USROBJ) 
-	$(LD) $(LDFLAGS) -T user.lds -o $@ $< $(USROBJ)
+	gcc -m32  -g -fno-omit-frame-pointer -ffreestanding -Wall -Iinclude -fno-PIC   -c -o user.o user.c
 
 
 clean:
