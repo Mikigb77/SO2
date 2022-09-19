@@ -40,6 +40,7 @@ LIBZEOS = -L . -l zeos
 #add to USROBJ any object files required to complete the user program
 USROBJ = \
 	libc.o \
+	suma.o\
 	# libjp.a \
 
 all:zeos.bin
@@ -92,7 +93,11 @@ system: system.o system.lds $(SYSOBJ)
 
 user: user.o user.lds $(USROBJ) 
 	$(LD) $(LDFLAGS) -T user.lds -o $@ $< $(USROBJ)
+	
+suma.s: suma.S $(INCLUDEDIR)/asm.h
+	$(CPP) $(ASMFLAGS) -o $@ $<
 
+sima.o: suma.s
 
 clean:
 	rm -f *.o *.s bochsout.txt parport.out system.out system bootsect zeos.bin user user.out *~ build 
