@@ -1,2 +1,2 @@
 # SO2
-So2 repo
+My SO2 Project
