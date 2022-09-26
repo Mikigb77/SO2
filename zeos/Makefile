@@ -96,7 +96,7 @@ system: system.o system.lds $(SYSOBJ)
 user: user.o user.lds $(USROBJ)
 	$(LD) $(LDFLAGS) -T user.lds -o $@ $< $(USROBJ)
 
-suma.s: suma.S $(INCLUDEDIR)/asm.h
+suma.s: suma.S
 	$(CPP) $(ASMFLAGS) -o $@ $<
 
 sima.o: suma.s
