@@ -15,11 +15,11 @@ Register    idtR;
 char char_map[] =
 {
   '\0','\0','1','2','3','4','5','6',
-  '7','8','9','0','\'','¡','\0','\0',
+  '7','8','9','0','\'','ï¿½','\0','\0',
   'q','w','e','r','t','y','u','i',
   'o','p','`','+','\0','\0','a','s',
-  'd','f','g','h','j','k','l','ñ',
-  '\0','º','\0','ç','z','x','c','v',
+  'd','f','g','h','j','k','l','ï¿½',
+  '\0','ï¿½','\0','ï¿½','z','x','c','v',
   'b','n','m',',','.','-','\0','*',
   '\0','\0','\0','\0','\0','\0','\0','\0',
   '\0','\0','\0','\0','\0','\0','\0','7',
@@ -79,7 +79,7 @@ void setIdt()
   /* Program interrups/exception service routines */
   idtR.base  = (DWord)idt;
   idtR.limit = IDT_ENTRIES * sizeof(Gate) - 1;
-  
+
   set_handlers();
 
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
@@ -87,3 +87,27 @@ void setIdt()
   set_idt_reg(&idtR);
 }
 
+/*----------------------------------------------*/
+/*--------------My Interrupts-------------------*/
+/*----------------------------------------------*/
+
+//returns the char mapped in the char map or a C if it's not there.
+char getch(char& c){
+  int s = sizeof(char_map);
+  for (int i = 0; i < s; ++i)
+    if (c == char_map[i])
+      return c;
+  return 'C';
+}
+
+/*My Keyboard service routine*/
+void keyboard_routine(){
+  char b = inb(0x60);
+  char c = 'C';
+  if (b & 0x80)
+    c = getch(b);
+  printc_xy(0x00, 0x00, c);
+
+}
+
+setInterruptHandler(33, keyboard_handler, 0);

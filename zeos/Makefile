@@ -72,7 +72,9 @@ user.o:user.c $(INCLUDEDIR)/libc.h
 	gcc -m32 -g -fno-omit-frame-pointer -ffreestanding -Wall -Iinclude -fno-PIC   -c -o user.o user.c
 
 
-interrupt.o:interrupt.c $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/types.h
+interrupt.o:interrupt.c $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/types.h keyboard_handler.o
+
+keyboard_handler.o: keyboard_handler.s
 
 io.o:io.c $(INCLUDEDIR)/io.h
 
@@ -98,6 +100,7 @@ user: user.o user.lds $(USROBJ)
 
 suma.s: suma.S
 	$(CPP) $(ASMFLAGS) -o $@ $<
+
 
 sima.o: suma.s
 
