@@ -83,6 +83,7 @@ void setIdt()
   set_handlers();
 
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
+  setInterruptHandler(33, keyboard_handler, 0);
 
   set_idt_reg(&idtR);
 }
@@ -91,10 +92,10 @@ void setIdt()
 /*--------------My Interrupts-------------------*/
 /*----------------------------------------------*/
 
-//returns the char mapped in the char map or a C if it's not there.
-char getch(char& c){
-  int s = sizeof(char_map);
-  for (int i = 0; i < s; ++i)
+//returns the char c if it's in the char_map or C if not
+char getc(char c){
+  int size = sizeof(char_map);
+  for (int i = 0; i < size; ++i)
     if (c == char_map[i])
       return c;
   return 'C';
@@ -102,12 +103,13 @@ char getch(char& c){
 
 /*My Keyboard service routine*/
 void keyboard_routine(){
-  char b = inb(0x60);
-  char c = 'C';
-  if (b & 0x80)
-    c = getch(b);
-  printc_xy(0x00, 0x00, c);
+  unsigned char b = inb(0x60);
+  if (b & 0x80){
+    b = b & 0b01111111;
+    char c = char_map[b] == '\0' ? 'C' : char_map[b];
+    printc_xy(0x00, 0x00, c);
+  }
+
+
 
 }
-
-setInterruptHandler(33, keyboard_handler, 0);

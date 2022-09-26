@@ -35,6 +35,7 @@ SYSOBJ = \
 	hardware.o \
 	list.o \
 
+
 LIBZEOS = -L . -l zeos
 
 #add to USROBJ any object files required to complete the user program
@@ -72,9 +73,7 @@ user.o:user.c $(INCLUDEDIR)/libc.h
 	gcc -m32 -g -fno-omit-frame-pointer -ffreestanding -Wall -Iinclude -fno-PIC   -c -o user.o user.c
 
 
-interrupt.o:interrupt.c $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/types.h keyboard_handler.o
-
-keyboard_handler.o: keyboard_handler.s
+interrupt.o:interrupt.c $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/types.h
 
 io.o:io.c $(INCLUDEDIR)/io.h
 
