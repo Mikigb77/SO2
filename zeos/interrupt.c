@@ -6,8 +6,11 @@
 #include <segment.h>
 #include <hardware.h>
 #include <io.h>
+#include "global.h"
+
 
 #include <zeos_interrupt.h>
+
 
 Gate idt[IDT_ENTRIES];
 Register    idtR;
@@ -84,32 +87,26 @@ void setIdt()
 
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(33, keyboard_handler, 0);
+  setInterruptHandler(32, clock_handler, 0);
+  setTrapHandler(0x80, system_call_handler, 3);
 
   set_idt_reg(&idtR);
 }
 
-/*----------------------------------------------*/
-/*--------------My Interrupts-------------------*/
-/*----------------------------------------------*/
+/*-------------------------------------------------------*/
+/*-----------MY HANDLERS AND ROUTINES--------------------*/
+/*-------------------------------------------------------*/
 
-//returns the char c if it's in the char_map or C if not
-char getc(char c){
-  int size = sizeof(char_map);
-  for (int i = 0; i < size; ++i)
-    if (c == char_map[i])
-      return c;
-  return 'C';
-}
-
-/*My Keyboard service routine*/
 void keyboard_routine(){
   unsigned char b = inb(0x60);
   if (b & 0x80){
     b = b & 0b01111111;
     char c = char_map[b] == '\0' ? 'C' : char_map[b];
-    printc_xy(0x00, 0x00, c);
+    printc_xy(0x45, 0x15, c);
   }
+}
 
-
-
+void clock_routine(){
+  zeos_ticks++;
+  zeos_show_clock();
 }

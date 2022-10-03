@@ -34,14 +34,16 @@ SYSOBJ = \
 	utils.o \
 	hardware.o \
 	list.o \
-
+	global.o\
+	#wraper.o\
 
 LIBZEOS = -L . -l zeos
 
 #add to USROBJ any object files required to complete the user program
 USROBJ = \
 	libc.o \
-	suma.o\
+	wraper.o\
+	global.o\
 	# libjp.a \
 
 all:zeos.bin
@@ -70,7 +72,7 @@ sys_call_table.s: sys_call_table.S $(INCLUDEDIR)/asm.h $(INCLUDEDIR)/segment.h
 	$(CPP) $(ASMFLAGS) -o $@ $<
 
 user.o:user.c $(INCLUDEDIR)/libc.h
-	gcc -m32 -g -fno-omit-frame-pointer -ffreestanding -Wall -Iinclude -fno-PIC   -c -o user.o user.c
+	gcc -m32  -g -fno-omit-frame-pointer -ffreestanding -Wall -Iinclude -fno-PIC   -c -o user.o user.c
 
 
 interrupt.o:interrupt.c $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/types.h
@@ -84,12 +86,13 @@ libc.o:libc.c $(INCLUDEDIR)/libc.h
 mm.o:mm.c $(INCLUDEDIR)/types.h $(INCLUDEDIR)/mm.h
 
 sys.o:sys.c $(INCLUDEDIR)/devices.h
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 utils.o:utils.c $(INCLUDEDIR)/utils.h
-
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 system.o:system.c $(INCLUDEDIR)/hardware.h system.lds $(SYSOBJ) $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/types.h $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/system.h $(INCLUDEDIR)/sched.h $(INCLUDEDIR)/mm.h $(INCLUDEDIR)/io.h $(INCLUDEDIR)/mm_address.h
-
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 system: system.o system.lds $(SYSOBJ)
 	$(LD) $(LDFLAGS) -T system.lds -o $@ $< $(SYSOBJ) $(LIBZEOS)
@@ -97,11 +100,11 @@ system: system.o system.lds $(SYSOBJ)
 user: user.o user.lds $(USROBJ)
 	$(LD) $(LDFLAGS) -T user.lds -o $@ $< $(USROBJ)
 
-suma.s: suma.S
-	$(CPP) $(ASMFLAGS) -o $@ $<
+wraper.o: wraper.S
+	$(CC) -c $(CFLAGS) $< -o $@
+global.o: global.c
+	$(CC) -c $(CFLAGS) -o $@ $<
 
-
-sima.o: suma.s
 
 clean:
 	rm -f *.o *.s bochsout.txt parport.out system.out system bootsect zeos.bin user user.out *~ build

@@ -5,6 +5,7 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
+
 /** System types definition **/
 /*****************************/
 
@@ -133,10 +134,10 @@ typedef Word Selector;
 
 #define NULL 0
 
-typedef union 
+typedef union
 {
   unsigned int entry;
-  struct {    
+  struct {
     unsigned int present  : 1;
     unsigned int rw       : 1;
     unsigned int user     : 1;

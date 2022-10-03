@@ -1,11 +1,8 @@
 /*
- * entry.S - Entry point to system mode from user mode
- */
-
+* My Wrapers
+*/
 #include <asm.h>
 #include <segment.h>
-#include <errno.h>
-
 /**************************************************/
 /**** Save & Restore ******************************/
 /**                                              **/
@@ -35,65 +32,30 @@
 /**                                              **/
 /**************************************************/
 
-#define SAVE_ALL \
-      pushl %gs; \
-      pushl %fs; \
-      pushl %es; \
-      pushl %ds; \
-      pushl %eax; \
-      pushl %ebp; \
-      pushl %edi; \
-      pushl %esi; \
-      pushl %edx; \
-      pushl %ecx; \
-      pushl %ebx; \
-      movl $__KERNEL_DS, %edx;    \
-      movl %edx, %ds;           \
-      movl %edx, %es
+ENTRY(write)
+  pushl %ebp
+  movl %esp, %ebp
+  /** Posem els parametres en els reg */
+  movl 8(%ebp), %ebx
+  movl 12(%ebp), %ecx
+  movl 16(%ebp), %edx
+  movl $4, %eax
+  int $0x80
+  /** now we need to check if there was an error */
+  err_handling:
+  cmpl $0, %eax
+  jge enderr
+  neg %eax
+  movl %eax, errno
+  movl $-1, %eax
+  enderr:
+  popl %ebp
+  ret
 
-#define RESTORE_ALL \
-      popl %ebx; \
-      popl %ecx; \
-      popl %edx; \
-      popl %esi; \
-      popl %edi; \
-      popl %ebp; \
-      popl %eax; \
-      popl %ds; \
-      popl %es; \
-      popl %fs; \
-      popl %gs; \
-
-#define EOI \
-      movb $0x20, %al ; \
-      outb %al, $0x20 ;
-
-ENTRY(system_call_handler)
-  SAVE_ALL      /* Save the current context */
-  cmpl $0, %EAX       /* Is syscall number negative? */
-  jl err      /* If it is, jump to return an error */
-  cmpl $MAX_SYSCALL, %EAX       /* Is syscall greater than MAX_SYSCALL (4)? */
-  jg err      /* If it is, jump to return an error */
-  call *sys_call_table(, %EAX, 0x04)      /* Call the corresponding service routine */
-  jmp fin       /* Finish */
-  err:
-  movl $-ENOSYS, %EAX       /* Move to EAX the ENOSYS error */
-  fin:
-  movl %EAX, 0x18(%esp)       /* Change the EAX value in the stack */
-  RESTORE_ALL       /* Restore the context */
-  iret
-
-
-ENTRY(keyboard_handler)
-  SAVE_ALL
-  EOI
-  call keyboard_routine
-  RESTORE_ALL
-  iret
-
-ENTRY(clock_handler)
-  SAVE_ALL
-  EOI
-  call clock_routine
-  RESTORE_ALL
-  iret
+ENTRY(gettime)
+  pushl %ebp
+  movl %esp, %ebp
+  movl $10, %eax
+  int $0x80
+  popl %ebp
+  ret
