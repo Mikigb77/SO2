@@ -7,7 +7,7 @@ char buff[24];
 int pid;
 
 int printmf(char *buff){
-  int n = write(1, buff,strlen(buff));
+  int n = fast_write(1, buff,strlen(buff));
   if (n == -1){
     perror();
   }

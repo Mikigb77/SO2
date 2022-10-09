@@ -17,6 +17,8 @@
 
 #include "global.h"
 
+#include "My_ini_settings.h"
+
 #define LECTURA 0
 #define ESCRIPTURA 1
 
