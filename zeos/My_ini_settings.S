@@ -1,7 +1,7 @@
 #include <asm.h>
 ENTRY(setMSR)
     pushl %ebp
-    movl %esp, $ebp
+    movl %esp, %ebp
     /**make %edx = 0x00 */
     xor %edx, %edx
     /**set the values of reg to write into %ecx */
@@ -18,7 +18,7 @@ ENTRY(setMSR)
     wrmsr
 
     /**Handler: */
-    movl 16(%ebx), %eax
+    movl 16(%ebp), %eax
     movl $0x176, %ecx
     wrmsr
     

@@ -57,35 +57,53 @@ ENTRY(write)
  jmp err_handling
 
 ENTRY(fast_write)
-  pushl %ebp
-  movl %esp, %ebp
+	pushl %ebp
+	movl %esp, %ebp
 
-  /** First save the ecx and edx since they will be modified by sysexit */
-  pushl %edx
-  pushl %ecx
-  /**now we pass the param */
-  movl 8(%ebp), %ebx
-  movl 12(%ebp), %ecx
-  movl 16(%ebp), %edx
-  /**add to %eax the syscall number */
-  movl $4, %eax
-  /**push the values of the esp and the return address: */
-  pushl sysret
-  pushl %ebp
-  /** create fake dynamic link: */
-  movl %esp, %ebp
-  /**enter the system */
-  sysenter
-  sysret:
-  /**recover all the data: */
-  popl %ebp
-  popl %ecx
-  popl %ecx
-  popl %edx
+	// Save edx and ecx
+	pushl %edx
+	pushl %ecx
+	pushl %ebx
+	pushl %esi
 
-  /**now we need to check the errors and handle them: */
-  jmp err_handling
+	movl 8(%ebp), %ebx
+	movl 12(%ebp), %ecx
+	movl 16(%ebp), %edx
 
+	movl $4, %eax
+
+	// Save return address
+	leal write_ret, %esi
+	pushl %esi
+	
+	// Prepare stack frame for the syscall
+	pushl %ebp
+	movl %esp, %ebp
+
+	sysenter
+write_ret:
+	movl %ebp, %esp
+	popl %ebp
+
+	
+	test %eax, %eax
+	jns end_write
+	neg %eax
+	movl %eax, errno
+	
+	movl $-1, %eax
+
+end_write:
+	popl %esi
+
+	popl %esi
+	popl %ebx
+	popl %ecx
+	popl %edx
+
+	movl %ebp, %esp
+	popl %ebp
+	ret
 
 ENTRY(gettime)
   pushl %ebp
