@@ -36,6 +36,7 @@ SYSOBJ = \
 	list.o \
 	global.o\
 	My_ini_settings.o\
+	MyTaskList.h\
 	#wraper.o\
 
 LIBZEOS = -L . -l zeos
@@ -105,7 +106,10 @@ wraper.o: wraper.S
 	$(CC) -c $(CFLAGS) $< -o $@
 global.o: global.c
 	$(CC) -c $(CFLAGS) -o $@ $<
-My_ini_settings.o: My_ini_settings.S
+My_ini_settings.o: My_ini_settings.S My_ini_settings.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+MyTaskList.o: MyTaskList.c MyTaskList.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
