@@ -24,24 +24,26 @@
 
 int check_fd(int fd, int permissions)
 {
-  if (fd!=1) return -9; /*EBADF*/
-  if (permissions!=ESCRIPTURA) return -13; /*EACCES*/
+  if (fd != 1)
+    return -9; /*EBADF*/
+  if (permissions != ESCRIPTURA)
+    return -13; /*EACCES*/
   return 0;
 }
 
 int sys_ni_syscall()
 {
-	return -38; /*ENOSYS*/
+  return -38; /*ENOSYS*/
 }
 
 int sys_getpid()
 {
-	return current()->PID;
+  return current()->PID;
 }
 
 int sys_fork()
 {
-  int PID=-1;
+  int PID = -1;
 
   // creates the child process
 
@@ -51,9 +53,9 @@ int sys_fork()
 void sys_exit()
 {
 }
-int sys_write (int fd, char * buff, int size)
+int sys_write(int fd, char *buff, int size)
 {
-  //Check the user permissions:
+  // Check the user permissions:
   int error = 0;
 
   if ((error = check_fd(fd, ESCRIPTURA)) < 0)
@@ -66,17 +68,18 @@ int sys_write (int fd, char * buff, int size)
     return -EINVAL;
 
   /**
-  * now we need to verify if the buff points to a readable direction
-  * before attempting to copy it in the SO memoryspace
-  */
+   * now we need to verify if the buff points to a readable direction
+   * before attempting to copy it in the SO memoryspace
+   */
   if (!access_ok(VERIFY_READ, buff, size))
     return -EACCES;
 
-  char buffer [size];
+  char buffer[size];
   copy_from_user(buff, buffer, size);
   return sys_write_console(buffer, size);
 }
 
-unsigned long sys_gettime(){
+unsigned long sys_gettime()
+{
   return zeos_ticks;
 }
