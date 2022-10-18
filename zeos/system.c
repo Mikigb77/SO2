@@ -27,7 +27,7 @@ unsigned int *p_rdtr = (unsigned int *)KERNEL_START + 2;
  ** setSegmentRegisters ***
  **************************
  * Set properly all the registers, used
- * at initialization code.
+ * at initialization code.>
  *   DS, ES, FS, GS <- DS
  *   SS:ESP <- DS:DATA_SEGMENT_SIZE
  *         (the stacks grows towards 0)

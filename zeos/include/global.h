@@ -3,5 +3,5 @@
  */
 
 extern unsigned long zeos_ticks;
-extern struct list_head freeque;
-extern struct list_head readyqueue;
+// extern struct list_head freeque;
+// extern struct list_head readyqueue;
