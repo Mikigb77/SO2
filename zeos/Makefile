@@ -36,7 +36,6 @@ SYSOBJ = \
 	list.o \
 	global.o\
 	My_ini_settings.o\
-	MyTaskList.o\
 	#wraper.o\
 
 LIBZEOS = -L . -l zeos
@@ -81,7 +80,7 @@ interrupt.o:interrupt.c $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/segment.h $(INCL
 
 io.o:io.c $(INCLUDEDIR)/io.h
 
-sched.o:sched.c $(INCLUDEDIR)/sched.h
+sched.o:sched.c $(INCLUDEDIR)/sched.h $(INCLUDEDIR)/global.h
 
 libc.o:libc.c $(INCLUDEDIR)/libc.h
 
@@ -104,13 +103,12 @@ user: user.o user.lds $(USROBJ)
 
 wraper.o: wraper.S
 	$(CC) -c $(CFLAGS) $< -o $@
-global.o: global.c
+global.o: global.c $(INCLUDEDIR)/list.h $(INCLUDEDIR)/sched.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 My_ini_settings.o: My_ini_settings.S $(INCLUDEDIR)/My_ini_settings.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
-MyTaskList.o: MyTaskList.c $(INCLUDEDIR)/MyTaskList.h
-	$(CC) -c $(CFLAGS) $< -o $@
+
 
 clean:
 	rm -f *.o *.s bochsout.txt parport.out system.out system bootsect zeos.bin user user.out *~ build

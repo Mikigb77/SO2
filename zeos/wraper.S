@@ -73,7 +73,7 @@ ENTRY(fast_write)
 	movl $4, %eax
 
 	// Save return address
-	leal write_ret, %esi
+	leal wrEnd, %esi
 	pushl %esi
 	
 	// Prepare stack frame for the syscall
@@ -81,29 +81,16 @@ ENTRY(fast_write)
 	movl %esp, %ebp
 
 	sysenter
-write_ret:
-	movl %ebp, %esp
+wrEnd:
 	popl %ebp
 
-	
-	test %eax, %eax
-	jns end_write
-	neg %eax
-	movl %eax, errno
-	
-	movl $-1, %eax
-
-end_write:
 	popl %esi
 
 	popl %esi
 	popl %ebx
 	popl %ecx
 	popl %edx
-
-	movl %ebp, %esp
-	popl %ebp
-	ret
+	jmp err_handling
 
 ENTRY(gettime)
   pushl %ebp
