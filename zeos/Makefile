@@ -36,6 +36,7 @@ SYSOBJ = \
 	list.o \
 	global.o\
 	My_ini_settings.o\
+	schedAsm.o\
 	#wraper.o\
 
 LIBZEOS = -L . -l zeos
@@ -106,6 +107,8 @@ wraper.o: wraper.S
 global.o: global.c $(INCLUDEDIR)/list.h $(INCLUDEDIR)/sched.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 My_ini_settings.o: My_ini_settings.S $(INCLUDEDIR)/My_ini_settings.h
+	$(CC) -c $(CFLAGS) $< -o $@
+schedAsm.o: schedAsm.S $(INCLUDEDIR)/schedAsm.h $(INCLUDEDIR)/sched.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 

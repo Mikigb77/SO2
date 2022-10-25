@@ -7,6 +7,7 @@
 #include <io.h>
 #include "global.h"
 #include "My_ini_settings.h"
+#include "schedAsm.h"
 
 union task_union task[NR_TASKS]
 	__attribute__((__section__(".data.task")));
@@ -79,8 +80,12 @@ void init_idle(void)
 	--esp;
 	tu->stack[esp] = (unsigned long)&cpu_idle; // value of the @ret
 	--esp;
-	tu->stack[esp] = 0; // value of ebp
-	tu->task.ebp = &tu->stack[esp];
+	tu->stack[esp] = 0; // value of kernel_ebp
+	tu->task.kernel_ebp = (unsigned int)&tu->stack[esp];
+	/**********************************************************/
+	/********************testing*******************************/
+	// task_switch(tu);
+	/**********************************************************/
 }
 
 void init_task1(void)
@@ -93,7 +98,7 @@ void init_task1(void)
 	t->PID = 1;
 	allocate_DIR(t);
 	set_user_pages(t);
-	tss.esp0 = &tu->stack[KERNEL_STACK_SIZE];
+	tss.esp0 = (unsigned int)&tu->stack[KERNEL_STACK_SIZE];
 	setMSR_ESP0(tss.esp0);
 	set_cr3(t->dir_pages_baseAddr);
 }
@@ -124,4 +129,13 @@ struct task_struct *current()
 		"movl %%esp, %0"
 		: "=g"(ret_value));
 	return (struct task_struct *)(ret_value & 0xfffff000);
+}
+
+void task_switch(union task_union *new)
+{
+	/**we need to change the stack address*/
+	tss.esp0 = &new->stack[KERNEL_STACK_SIZE];
+	setMSR_ESP0(tss.esp0);
+	set_cr3(new->task.dir_pages_baseAddr);
+	task_switch_(new);
 }
