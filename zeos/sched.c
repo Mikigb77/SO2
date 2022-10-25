@@ -94,7 +94,7 @@ void init_task1(void)
 	allocate_DIR(t);
 	set_user_pages(t);
 	tss.esp0 = &tu->stack[KERNEL_STACK_SIZE];
-	setMSR_REG(0x175, tss.esp0);
+	setMSR_ESP0(tss.esp0);
 	set_cr3(t->dir_pages_baseAddr);
 }
 

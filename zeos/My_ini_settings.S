@@ -26,6 +26,20 @@ ENTRY(setMSR)
     popl %ebp
     ret
 
+ENTRY(setMSR_ESP0)
+    pushl %ebp
+    movl %esp, %ebp
+    xor %edx, %edx
+    /**with edx set to 0 */
+    /**kernel_ESP */
+    movl 8(%ebp), %eax
+    movl $0x175, %ecx
+    wrmsr
+
+    movl %ebp, %esp
+    popl %ebp
+    ret
+
 
 ENTRY(setMSR_REG)
 	pushl %ebp
