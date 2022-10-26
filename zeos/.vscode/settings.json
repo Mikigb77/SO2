@@ -1,6 +1,7 @@
 {
   "C_Cpp.errorSquiggles": "Disabled",
   "files.associations": {
-    "sched.h": "c"
+    "sched.h": "c",
+    "stddef.h": "c"
   }
 }

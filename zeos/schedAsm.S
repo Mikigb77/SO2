@@ -27,7 +27,7 @@ ENTRY(inner_task_switch)
 
     /**Now we need to add the %ebp in the pcb['ebp'] */
     movl 8(%ebp), %eax /** eax = @ of union task_union */
-    leal 4(eax), %ebx /** @ kernel_ebp of new */
+    leal 4(%eax), %ebx /** @ kernel_ebp of new */
     
     call current /**eax = @ current */
     movl %ebp, 4(%eax) /** @ kernel_ebp (curr) = ebp */

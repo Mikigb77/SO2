@@ -82,10 +82,6 @@ void init_idle(void)
 	--esp;
 	tu->stack[esp] = 0; // value of kernel_ebp
 	tu->task.kernel_ebp = (unsigned int)&tu->stack[esp];
-	/**********************************************************/
-	/********************testing*******************************/
-	// task_switch(tu);
-	/**********************************************************/
 }
 
 void init_task1(void)
