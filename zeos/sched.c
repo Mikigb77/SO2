@@ -136,6 +136,8 @@ void task_switch(union task_union *new)
 	/**we need to change the stack address*/
 	tss.esp0 = &new->stack[KERNEL_STACK_SIZE];
 	setMSR_ESP0(tss.esp0);
+	/**now change the pages_dir and make the TLB flush*/
 	set_cr3(new->task.dir_pages_baseAddr);
+	/**now change the kernel_ebp*/
 	task_switch_(new);
 }
