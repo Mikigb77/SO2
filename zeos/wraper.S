@@ -60,37 +60,68 @@ ENTRY(fast_write)
 	pushl %ebp
 	movl %esp, %ebp
 
-	// Save edx and ecx
+	/**save edx and ecx*/
 	pushl %edx
 	pushl %ecx
 	pushl %ebx
 	pushl %esi
-
+	/**add param to reg */
 	movl 8(%ebp), %ebx
 	movl 12(%ebp), %ecx
 	movl 16(%ebp), %edx
-
 	movl $4, %eax
 
-	// Save return address
+	/**save return address*/
 	leal wrEnd, %esi
 	pushl %esi
 	
-	// Prepare stack frame for the syscall
+	/**prepare stack frame for the syscall*/
 	pushl %ebp
 	movl %esp, %ebp
 
 	sysenter
+
 wrEnd:
 	popl %ebp
-
+	/**extra pop for the leal */
 	popl %esi
-
 	popl %esi
 	popl %ebx
 	popl %ecx
 	popl %edx
 	jmp err_handling
+
+
+ENTRY(getpid)
+	pushl %ebp
+	movl %esp, %ebp
+	
+	/**save the ebx and ecx that are used in the sysexit */
+	pushl %ebx
+	pushl %ecx
+	/**save the return address */
+	leal getpidEnd, %eax
+	pushl %eax
+
+	/**get the fake link for the system */
+	pushl %ebp
+	movl %esp, %ebp
+
+	/**add the num of syscall to %eax */
+	movl $20, %eax
+
+	sysenter
+
+getpidEnd:
+	popl %ebp
+	/**extra pop because of the push for the getpidEnd */
+	popl %ecx
+	popl %ecx
+	popl %ebx
+
+	jmp err_handling
+
+	
 
 ENTRY(gettime)
   pushl %ebp

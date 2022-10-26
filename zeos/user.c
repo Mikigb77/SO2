@@ -20,6 +20,12 @@ main(void)
 {
   char buff[200] = {' ', 'H', 'o', 'l', 'a', '!', '\n', '\n'};
   printmf(buff);
+  itoa(getpid(), buff);
+  /**chack for pid*/
+  printmf("PID: ");
+  printmf(buff);
+  printmf("\n");
+  /**check for ticks*/
   printmf("ticks[0]: ");
   int a = gettime();
   itoa(a, buff);
