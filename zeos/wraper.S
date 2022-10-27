@@ -44,7 +44,7 @@
   popl %ebp
   ret
 
-ENTRY(write)
+ENTRY(int_write)
   pushl %ebp
   movl %esp, %ebp
   /** Posem els parametres en els reg */
@@ -56,7 +56,7 @@ ENTRY(write)
   /** now we need to check if there was an error */
  jmp err_handling
 
-ENTRY(fast_write)
+ENTRY(write)
 	pushl %ebp
 	movl %esp, %ebp
 
@@ -119,9 +119,41 @@ getpidEnd:
 	popl %ecx
 	popl %ebx
 
+	/**finaly we go to the error handling section */
 	jmp err_handling
 
+ENTRY(fork)
+	pushl %ebp
+	movl %esp, %ebp
+
+	/**since we use sysenter we need to save the ebx and ecx */
+	pushl %ebx
+	pushl %ecx
 	
+	/**now we need to save the return @ in the stack */
+	leal forkEnd, %eax
+	pushl %eax
+
+	/**finaly we need to complete the activation bloc with the fake link */
+	pushl %ebp
+	movl %esp, %ebp
+
+	/**finaly we add to the %eax the syscall number (2) */
+	movl $2, %eax
+
+	sysenter
+
+forkEnd:
+	/**recover the data */
+	popl %ebp
+	/**extrapop because of the leal */
+	popl %ecx
+	popl %ecx
+	popl %ebx
+
+	/**finaly we just need to go handle the errors */
+	jmp err_handling
+
 
 ENTRY(gettime)
   pushl %ebp

@@ -62,6 +62,11 @@ struct task_struct *list_head_to_task_struct(struct list_head *l)
 	return list_entry(l, struct task_struct, list);
 }
 
+int getNewPID()
+{
+	return (int)++newPID;
+}
+
 void init_idle(void)
 {
 	struct list_head *l = list_first(&freequeue);
@@ -91,7 +96,7 @@ void init_task1(void)
 	struct task_struct *t = list_head_to_task_struct(l);
 	union task_union *tu = (union task_union *)t;
 
-	t->PID = 1;
+	t->PID = getNewPID();
 	allocate_DIR(t);
 	set_user_pages(t);
 	tss.esp0 = (unsigned int)&tu->stack[KERNEL_STACK_SIZE];
