@@ -151,4 +151,11 @@
 
 #define EHWPOISON 133 /* Memory page has hardware error */
 
+/***************************************************************************/
+/*************************MyErrortypes**************************************/
+
+#define MYENFRETSK 134 /* No free tasks so proces cannot be initialized*/
+
+/***************************************************************************/
+
 #endif

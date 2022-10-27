@@ -57,11 +57,21 @@ void cpu_idle(void)
 	}
 }
 
+/**
+ * @brief gets the task_struct that contains the list l
+ * @param l The pointer to the list contained in the task_struct to get
+ * @return a pointer to the task struct that contains l
+ */
 struct task_struct *list_head_to_task_struct(struct list_head *l)
 {
 	return list_entry(l, struct task_struct, list);
 }
 
+/**
+ * @brief returns a new pid for the process
+ *
+ * @return the new unic PID for the process
+ */
 int getNewPID()
 {
 	return (int)++newPID;
@@ -122,6 +132,10 @@ void init_sched()
 	init_readyqueue();
 }
 
+/**
+ * @brief get the current task_struct
+ * @return Returns a pointer to the current task_struct
+ */
 struct task_struct *current()
 {
 	int ret_value;
@@ -137,8 +151,13 @@ void task_switch(union task_union *new)
 	/**we need to change the stack address*/
 	tss.esp0 = &new->stack[KERNEL_STACK_SIZE];
 	setMSR_ESP0(tss.esp0);
-	/**now change the pages_dir and make the TLB flush*/
-	set_cr3(new->task.dir_pages_baseAddr);
+
+	/**
+	 * now change the pages_dir and make the TLB flush
+	 * (ONLY if the memory between the programs is changed for the user data)
+	 */
+	if (current()->dir_pages_baseAddr != new->task.dir_pages_baseAddr)
+		set_cr3(new->task.dir_pages_baseAddr);
 	/**now change the kernel_ebp*/
 	task_switch_(new);
 }

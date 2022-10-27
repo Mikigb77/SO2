@@ -144,7 +144,13 @@ static char *errmsg[] = {
 
     "Operation not possible due to RF-kill",
 
-    "Memory page has hardware error"
+    "Memory page has hardware error",
+    /****************************************************/
+    /*******************My ERROR Messages****************/
+
+    "No free tasks so proces cannot be initialized"
+
+    /****************************************************/
 
 };
 

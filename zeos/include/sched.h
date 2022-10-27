@@ -64,4 +64,11 @@ void update_process_state_rr(struct task_struct *t, struct list_head *dest);
 int needs_sched_rr();
 void update_sched_data_rr();
 
+/***********************************************/
+/*******************My Functions****************/
+
+int getNewPID();
+
+/***********************************************/
+
 #endif /* __SCHED_H__ */
