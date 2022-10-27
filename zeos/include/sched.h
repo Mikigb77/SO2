@@ -22,9 +22,9 @@ enum state_t
 struct task_struct
 {
   int PID;                 /* Process ID. This MUST be the first field of the struct. */
-  unsigned int kernel_ebp; /** pointer that points to the base dir of the stack, usually stack[KERNEL_STACK_SIZE - 2]*/
+  unsigned int kernel_ebp; /* pointer that points to the base dir of the stack, usually stack[KERNEL_STACK_SIZE - 2]*/
   page_table_entry *dir_pages_baseAddr;
-  struct list_head list; /**list that serves as ancor to get the process in the freequeue, ready, etc*/
+  struct list_head list; /*list that serves as ancor to get the process in the freequeue, ready, etc*/
 };
 
 union task_union

@@ -56,24 +56,43 @@ int sys_fork()
   struct list_head *l = list_first(freequeue);
   struct task_struct *t1 = list_head_to_task_struct(l);
   union task_union *tu1 = (union task_union *)t1;
+  list_del(l);
   /*first get a PID for the son*/
   PID = getNewPID();
 
   /*copy the task so it's the same as the father*/
   *tu1 = *tu;
   t1->PID = PID;
-  /**
-   * we can set the kernel_ebp, since the 'tu' allready have the stack[] filled with a return @ and the ebp:
-   *
-   * STACK:
-   *
-   *  PCB   *
-   *        *
-   *        *
-   *  %ebp  *
-   *  @ret  *
-   */
+  /*we can set the kernel_ebp, since the 'tu' allready have the stack[] filled with a return @ and the ebp*/
   t1->kernel_ebp = &tu1->stack[KERNEL_STACK_SIZE - 2];
+
+  /*now we need to allocate the frames to store the user data*/
+  int frames[NUM_PAG_DATA];
+
+  for (int i = 0; i < NUM_PAG_DATA; ++i)
+  {
+    frames[i] = alloc_frame();
+    if (frames[i] == -1)
+    {
+      for (i; i >= 0; --i)
+        free_frame(frames[i]);
+      return -ENOMEM;
+    }
+  }
+  /*now we have the frames alocated and only need to copy the data*/
+  /*first let's allocate the new page table*/
+  allocate_DIR(t1);
+  /*get the page table of the curr and child*/
+  page_table_entry *p1 = get_PT(t1); // page table for the child
+  page_table_entry *p = get_PT(t);   // page table for the parent
+
+  /*now we need to copy the content of the pages*/
+  /*For the code pages we only need to copy the entry of the parent since they are read only */
+  for (int i = 0; i < NUM_PAG_CODE; ++i)
+    p1[PAG_LOG_INIT_CODE + i].entry = p[PAG_LOG_INIT_CODE + i].entry;
+
+  /*with this they should be sheared*/
+  /*now we need to copy the pages from the user data*/
 
   return PID;
 }
