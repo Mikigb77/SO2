@@ -8,5 +8,5 @@ void keyboard_handler();
 void clock_handler();
 int system_call_handler();
 int syscall_handler_sysenter();
-
+int ret_from_fork();
 #endif /* __ENTRY_H__ */

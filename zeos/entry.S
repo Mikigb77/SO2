@@ -106,6 +106,10 @@ ENTRY(syscall_handler_sysenter)
   sti // Enable interrupts again
   sysexit
 
+ENTRY(ret_from_fork)
+  RESTORE_ALL
+  movl $0, %eax
+  iret
 
 ENTRY(keyboard_handler)
   SAVE_ALL

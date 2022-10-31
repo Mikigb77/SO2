@@ -128,3 +128,10 @@ gdb: zeos.bin
 
 emuldbg: zeos.bin
 	bochs_nogdb -q -f .bochsrc
+
+######################################
+##########MY FUNC#####################
+deb:
+	clear
+	make clean
+	make
