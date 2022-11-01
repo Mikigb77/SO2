@@ -20,30 +20,22 @@ main(void)
 {
   char buff[200] = {' ', 'H', 'o', 'l', 'a', '!', '\n', '\n'};
   printmf(buff);
-  itoa(getpid(), buff);
-  /**chack for pid*/
-  printmf("PID: ");
-  printmf(buff);
-  printmf("\n");
-  /**check for ticks*/
-  printmf("ticks[0]: ");
-  int a = gettime();
-  itoa(a, buff);
-  printmf(buff);
-  printmf("\n");
-  for (unsigned long i = 0; i < 9999999; ++i)
-    ;
-
-  printmf("ticks[1]: ");
-  int b = gettime();
-  itoa(b, buff);
-  printmf(buff);
-  printmf("\n");
-  printmf("Elapsed: ");
-  itoa(b - a, buff);
-  printmf(buff);
-  printmf(" ticks");
-  printmf("\n");
+  int pid = fork();
+  if (pid == 0)
+  {
+    printmf("PID: ");
+    itoa(getpid(), buff);
+    printmf(buff);
+    printmf("\nI'm the son!!!!");
+    printmf("\n end of son");
+  }
+  else
+  {
+    printmf("PID: ");
+    itoa(getpid(), buff);
+    printmf(buff);
+    printmf("I'm the parent!!!\n");
+  }
 
   /* Next line, tries to move value 0 to CR3 register. This register is a privileged one, and so it will raise an exception */
   /* __asm__ __volatile__ ("mov %0, %%cr3"::"r" (0) ); */

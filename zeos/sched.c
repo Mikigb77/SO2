@@ -118,7 +118,13 @@ void init_freequeue()
 {
 	INIT_LIST_HEAD(&freequeue);
 	for (int i = 0; i < NR_TASKS; ++i)
+	{
+		// we initialize the values
+		initParams(&task[i].task);
+
+		// add the task to the list
 		list_add_tail(&task[i].task.list, &freequeue);
+	}
 }
 
 void init_readyqueue()
@@ -160,4 +166,19 @@ void task_switch(union task_union *new)
 		set_cr3(new->task.dir_pages_baseAddr);
 	/**now change the kernel_ebp*/
 	task_switch_(new);
+}
+
+void initParams(struct task_struct *t)
+{
+	t->quantum = FULL_QUANTUM;
+}
+
+int get_quantum(struct task_struct *t)
+{
+	return t->quantum;
+}
+
+void set_quantum(struct task_struct *t, int new_quantum)
+{
+	t->quantum = new_quantum;
 }

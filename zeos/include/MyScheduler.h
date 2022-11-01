@@ -2,10 +2,9 @@
 #ifndef _MY_SCHEDULER_
 #define _MY_SCHEDULER_
 
-#include <sched.h>
 #include "global.h"
+#include <sched.h>
 
-unsigned int ticks = 0;
 /**
  * @brief Update the relevant info for the scheduling desicions
  */
@@ -29,5 +28,10 @@ void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue)
  * @brief Decides the next proces to be executed and invokes the context switch
  */
 void sched_next_rr(void);
+
+/**
+ * @brief Manages all the scheduler tasks like updateing the info or changing the current task for a new one
+ */
+void sched_manager(void);
 
 #endif

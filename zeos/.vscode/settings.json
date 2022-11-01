@@ -3,6 +3,7 @@
   "files.associations": {
     "sched.h": "c",
     "stddef.h": "c",
-    "cstdio": "c"
+    "cstdio": "c",
+    "cstdlib": "c"
   }
 }

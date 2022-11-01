@@ -7,8 +7,16 @@
 #include <hardware.h>
 #include <io.h>
 #include "global.h"
+#include "MyScheduler.h"
 
 #include <zeos_interrupt.h>
+
+/*************************************/
+/***************For debug*************/
+
+#include <libc.h>
+
+/*************************************/
 
 Gate idt[IDT_ENTRIES];
 Register idtR;
@@ -106,6 +114,11 @@ void keyboard_routine()
 
 void clock_routine()
 {
+  sched_manager();
+  char buff[200];
+  itoa(current()->PID, buff);
+  printk(buff);
+  printk("\n");
   zeos_ticks++;
   zeos_show_clock();
 }

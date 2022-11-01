@@ -122,7 +122,7 @@ int sys_fork()
     set_ss_pag(p, FIRST_FREE_PAG + i, frames[i]);
 
     /*now we need to make the copy*/
-    copy_data((void *)p[NUM_PAG_KERNEL + NUM_PAG_CODE + i].entry, (void *)p[FIRST_FREE_PAG + i].entry, PAGE_SIZE);
+    copy_data((void *)((NUM_PAG_KERNEL + NUM_PAG_CODE + i) << 12), (void *)((FIRST_FREE_PAG + i) << 12), PAGE_SIZE);
 
     /*now we must set the PT entry for the son linking the PT entry to the frame where we copyed the info*/
     set_ss_pag(p1, (NUM_PAG_KERNEL + NUM_PAG_CODE + i), frames[i]);

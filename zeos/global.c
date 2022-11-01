@@ -7,4 +7,4 @@ struct list_head readyqueue;
 struct task_struct *idle_task;
 
 // the newpid that will be assigned to the process
-unsigned long newPID = 0;
+unsigned long newPID = 1;
