@@ -1,8 +1,6 @@
 #include <libc.h>
 #include <stddef.h>
 
-char buff[24];
-
 int pid;
 
 int printmf(char *buff)
@@ -18,25 +16,23 @@ int printmf(char *buff)
 int __attribute__((__section__(".text.main")))
 main(void)
 {
-  char buff[200] = {' ', 'H', 'o', 'l', 'a', '!', '\n', '\n'};
-  printmf(buff);
-  int pid = fork();
+  char buff[200];
+  pid = fork();
   if (pid == 0)
   {
-    printmf("PID: ");
+    printmf("\nI'm the son\nPID: ");
     itoa(getpid(), buff);
     printmf(buff);
-    printmf("\nI'm the son!!!!");
-    printmf("\n end of son");
+    printmf("\n");
+    exit();
   }
   else
   {
-    printmf("PID: ");
+    printmf("\nI'm the parent\nPID: ");
     itoa(getpid(), buff);
     printmf(buff);
-    printmf("I'm the parent!!!\n");
+    printmf("\n");
   }
-
   /* Next line, tries to move value 0 to CR3 register. This register is a privileged one, and so it will raise an exception */
   /* __asm__ __volatile__ ("mov %0, %%cr3"::"r" (0) ); */
 

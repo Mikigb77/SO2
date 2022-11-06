@@ -26,6 +26,7 @@ struct task_struct
   /*pointer that points to the base dir of the stack, usually stack[KERNEL_STACK_SIZE - 2]*/
   /*DO NOT CHANGE IT'S POSITION (2nd place of the struct)*/
   unsigned int kernel_ebp;
+  enum state_t state; // 0->run, 1->ready
   int quantum;
   page_table_entry *dir_pages_baseAddr;
   struct list_head list; /*list that serves as ancor to get the process in the freequeue, ready, etc*/

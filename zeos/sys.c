@@ -2,24 +2,16 @@
  * sys.c - Syscalls implementation
  */
 #include <devices.h>
-
 #include <utils.h>
-
 #include <io.h>
-
 #include <mm.h>
-
 #include <mm_address.h>
-
 #include <sched.h>
-
 #include <errno.h>
-
 #include "global.h"
-
 #include "My_ini_settings.h"
-
 #include <entry.h>
+#include "MyScheduler.h"
 
 #define LECTURA 0
 #define ESCRIPTURA 1
@@ -66,8 +58,10 @@ int sys_fork()
 
   /*copy the task so it's the same as the father*/
   *tu1 = *tu;
-  /*we also assign the new PID*/
+  /*we also assign the new PID and the ready state*/
   t1->PID = PID;
+  t1->state = ST_READY;
+  t1->quantum = FULL_QUANTUM;
   /*we can set the kernel_ebp, since the 'tu' allready have the stack[] filled with a return @ and the ebp*/
   // t1->kernel_ebp = &tu1->stack[KERNEL_STACK_SIZE - 2];
   //  |
@@ -122,10 +116,10 @@ int sys_fork()
     set_ss_pag(p, FIRST_FREE_PAG + i, frames[i]);
 
     /*now we need to make the copy*/
-    copy_data((void *)((NUM_PAG_KERNEL + NUM_PAG_CODE + i) << 12), (void *)((FIRST_FREE_PAG + i) << 12), PAGE_SIZE);
+    copy_data((void *)((PAG_LOG_INIT_DATA + i) << 12), (void *)((FIRST_FREE_PAG + i) << 12), PAGE_SIZE);
 
     /*now we must set the PT entry for the son linking the PT entry to the frame where we copyed the info*/
-    set_ss_pag(p1, (NUM_PAG_KERNEL + NUM_PAG_CODE + i), frames[i]);
+    set_ss_pag(p1, (PAG_LOG_INIT_DATA + i), frames[i]);
   }
 
   /*finaly we need to delete all the entris added to the parent*/
@@ -138,18 +132,25 @@ int sys_fork()
   /*now we need to prepare to restore the hw context because in our stack we have all the pushes from SAVE_ALL since it is a syscall*/
   /*first we need to change the pointer of KERNEL_EBP to the top of the stack in wich we will add the return code (with the restore all)*/
   /*we also need an ebp for the inner task switch to pop in the restoring process*/
-  tu->stack[KERNEL_STACK_SIZE - 17] = &ret_from_fork; // the return 0 for the child is done here
-  t->kernel_ebp = &tu->stack[KERNEL_STACK_SIZE - 18];
-  tu->stack[KERNEL_STACK_SIZE - 18] = 0; // if there is some error this will produce an exception
+  tu1->stack[KERNEL_STACK_SIZE - 17] = &ret_from_fork; // the return 0 for the child is done here
+  t1->kernel_ebp = &tu->stack[KERNEL_STACK_SIZE - 18];
+  tu1->stack[KERNEL_STACK_SIZE - 18] = 0; // if there is some error this will produce an exception
 
   /*finaly we add the process to the readyqueue*/
-  list_add_tail(&t->list, &readyqueue);
+  list_add_tail(&t1->list, &readyqueue);
 
   return PID;
 }
 
 void sys_exit()
 {
+  struct task_struct *t = current();
+  union task_union *tu = (union task_union *)t;
+  free_user_pages(t);
+  t->PID = -1;
+  list_add_tail(&t->list, &freequeue);
+
+  sched_next_rr();
 }
 int sys_write(int fd, char *buff, int size)
 {

@@ -4,6 +4,9 @@
     "sched.h": "c",
     "stddef.h": "c",
     "cstdio": "c",
-    "cstdlib": "c"
+    "cstdlib": "c",
+    "locale": "c",
+    "string": "c",
+    "myscheduler.h": "c"
   }
 }

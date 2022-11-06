@@ -114,11 +114,7 @@ void keyboard_routine()
 
 void clock_routine()
 {
-  sched_manager();
-  char buff[200];
-  itoa(current()->PID, buff);
-  printk(buff);
-  printk("\n");
+  schedule();
   zeos_ticks++;
   zeos_show_clock();
 }

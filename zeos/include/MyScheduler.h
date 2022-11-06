@@ -32,6 +32,6 @@ void sched_next_rr(void);
 /**
  * @brief Manages all the scheduler tasks like updateing the info or changing the current task for a new one
  */
-void sched_manager(void);
+void schedule(void);
 
 #endif

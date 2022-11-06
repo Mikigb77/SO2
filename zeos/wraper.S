@@ -154,6 +154,37 @@ forkEnd:
 	/**finaly we just need to go handle the errors */
 	jmp err_handling
 
+ENTRY(exit)
+	pushl %ebp
+	movl %esp, %ebp
+
+	/**since we use sysenter we need to save the ebx and ecx */
+	pushl %ebx
+	pushl %ecx
+
+	/**now we need to save the return @ in the stack */
+	leal exitEnd, %eax
+	pushl %eax
+
+	/**finaly we need to complete the activation bloc with the fake link */
+	pushl %ebp
+	movl %esp, %ebp
+	/**finaly we add to the %eax the syscall number (1) */
+	movl $1, %eax
+
+	sysenter
+
+exitEnd:
+	/**recover the data */
+	popl %ebp
+	/**extrapop because of the leal */
+	popl %ecx
+	popl %ecx
+	popl %ebx
+
+	/**finaly we just need to go handle the errors */
+	jmp err_handling
+
 
 ENTRY(gettime)
   pushl %ebp
