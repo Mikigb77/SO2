@@ -10,9 +10,18 @@
 /** Screen functions **/
 /**********************/
 
-Byte inb (unsigned short port);
+Byte inb(unsigned short port);
 void printc(char c);
+
+/**
+ * @brief prints the char in the specific color
+ *
+ * @param c char to print
+ * @param color color to print ex 0x0200 -> green
+ */
+void printcc(char c, int color);
+
 void printc_xy(Byte x, Byte y, char c);
 void printk(char *string);
 
-#endif  /* __IO_H__ */
+#endif /* __IO_H__ */

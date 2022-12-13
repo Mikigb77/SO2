@@ -36,7 +36,28 @@ void printc(char c)
   }
   else
   {
-    Word ch = (Word)(c & 0x00FF) | 0x0600;
+    Word ch = (Word)(c & 0x00FF) | 0x0200;
+    Word *screen = (Word *)0xb8000;
+    screen[(y * NUM_COLUMNS + x)] = ch;
+    if (++x >= NUM_COLUMNS)
+    {
+      x = 0;
+      y = (y + 1) % NUM_ROWS;
+    }
+  }
+}
+
+void printcc(char c, int color)
+{
+  __asm__ __volatile__("movb %0, %%al; outb $0xe9" ::"a"(c)); /* Magic BOCHS debug: writes 'c' to port 0xe9 */
+  if (c == '\n')
+  {
+    x = 0;
+    y = (y + 1) % NUM_ROWS;
+  }
+  else
+  {
+    Word ch = (Word)(c & 0x00FF) | (Word)color;
     Word *screen = (Word *)0xb8000;
     screen[(y * NUM_COLUMNS + x)] = ch;
     if (++x >= NUM_COLUMNS)
