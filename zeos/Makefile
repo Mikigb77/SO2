@@ -111,3 +111,8 @@ gdb: zeos.bin
 
 emuldbg: zeos.bin
 	bochs_nogdb -q -f .bochsrc
+
+dev:
+	make clean
+	clear
+	make
