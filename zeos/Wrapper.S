@@ -1,7 +1,7 @@
 #include <asm.h>
 #include <segment.h>
 
-#Entry(Suma)
+ENTRY(Suma)
     pushl %ebp
     movl %esp, %ebp
     movl 8(%ebp), %eax

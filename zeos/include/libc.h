@@ -21,5 +21,4 @@ int fork();
 void exit();
 
 int Suma(int a);
-
 #endif /* __LIBC_H__ */
