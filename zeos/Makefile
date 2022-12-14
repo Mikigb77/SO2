@@ -34,6 +34,7 @@ SYSOBJ = \
 	utils.o \
 	hardware.o \
 	list.o \
+	Wrapper.o \
 
 LIBZEOS = -L . -l zeos
 
