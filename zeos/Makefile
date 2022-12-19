@@ -34,6 +34,7 @@ SYSOBJ = \
 	utils.o \
 	hardware.o \
 	list.o \
+	errno.o\
 	
 
 LIBZEOS = -L . -l zeos
@@ -92,6 +93,8 @@ system.o:system.c $(INCLUDEDIR)/hardware.h system.lds $(SYSOBJ) $(INCLUDEDIR)/se
 
 Wrapper.s: Wrapper.S
 	$(CPP) $(ASMFLAGS) -o $@ $<
+
+errno.o: errno.c $(INCLUDEDIR)/errno.h $(INCLUDEDIR)/errnomsg.h
 
 system: system.o system.lds $(SYSOBJ)
 	$(LD) $(LDFLAGS) -T system.lds -o $@ $< $(SYSOBJ) $(LIBZEOS)
