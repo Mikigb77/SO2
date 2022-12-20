@@ -60,6 +60,6 @@ int sys_write(int fd, char *buff, int size)
     return -EINVAL;
   char *message = "";
   if (copy_from_user(buff, message, size) == -1)
-    return -ERANGE;
+    return -EINTR;
   return sys_write_console(message, size);
 }

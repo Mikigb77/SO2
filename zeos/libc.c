@@ -53,11 +53,19 @@ int strlen(char *a)
 
 void perror()
 {
-  char *str;
-  if (errno < 140)
-    str = errnomsg[errno];
-  else
-    str = "Internal error";
+  char *buffer;
 
-  write(1, str, strlen(str));
+  buffer = errnomsg[errno - 1];
+
+  write(1, buffer, strlen(buffer));
 }
+
+/*********************************************/
+/*********************AUX*********************/
+
+void printf(char *buff)
+{
+  if (write(1, buff, strlen(buff)) < 0)
+    perror();
+}
+/*********************************************/

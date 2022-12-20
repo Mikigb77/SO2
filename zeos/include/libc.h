@@ -24,4 +24,15 @@ int Suma(int a);
 
 void perror();
 
+/*********************************************/
+/*********************AUX*********************/
+
+/**
+ * @brief prints the buffer
+ *
+ * @param buff char* to print
+ */
+void printf(char *buff);
+/*********************************************/
+
 #endif /* __LIBC_H__ */
