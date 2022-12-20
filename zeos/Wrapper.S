@@ -1,6 +1,23 @@
 #include <asm.h>
 #include <segment.h>
 
+ENTRY(syscall_sysenter)
+    pushl %edx
+    pushl %ecx
+    pushl $SYSENTER_RETURN
+    pushl %ebp
+    movl %esp, %ebp
+    sysenter
+
+ENTRY(SYSENTER_RETURN)
+    popl %ebp
+    popl %ecx
+    popl %ecx
+    popl %edx
+    ret
+
+
+
 err_handling:
     test %eax, %eax
     jns end_err
@@ -17,8 +34,6 @@ ENTRY(write)
     pushl %ebp
     movl %esp, %ebp
     pushl %ebx
-    pushl %ecx
-    pushl %edx
 
     movl 8(%ebp), %ebx
     movl 12(%ebp), %ecx
@@ -27,10 +42,8 @@ ENTRY(write)
     /* passing the syscall number */
     movl $4, %eax
 
-    int $0x80
+    call syscall_sysenter
     
-    popl %edx
-    popl %ecx
     popl %ebx
 
     jmp err_handling

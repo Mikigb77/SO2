@@ -7,6 +7,7 @@
 #include <hardware.h>
 #include <io.h>
 #include <entry.h>
+#include "kernelUtils.h"
 
 #include <zeos_interrupt.h>
 
@@ -85,6 +86,13 @@ void setTrapHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
   idt[vector].highOffset = highWord((DWord)handler);
 }
 
+void initMSR()
+{
+  setMSR(0x174, __KERNEL_CS);
+  setMSR(0x175, INITIAL_ESP);
+  setMSR(0x176, (int)syscall_handler_sysenter);
+}
+
 void setIdt()
 {
   /* Program interrups/exception service routines */
@@ -98,6 +106,7 @@ void setIdt()
 
   /* INTERRUPTIONS OF EXCEPTIONS */
   setTrapHandler(0x80, (void *)system_call_handler, 3);
+  initMSR();
 
   set_idt_reg(&idtR);
 }
