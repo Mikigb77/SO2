@@ -18,15 +18,13 @@ ENTRY(SYSENTER_RETURN)
 
 
 
-err_handling:
+ENTRY(err_handling)
     test %eax, %eax
     jns end_err
     neg %eax
     movl %eax, errno
     movl $-1, %eax
 end_err:
-    movl %ebp, %esp
-    popl %ebp
     ret
 
 /* int write (int fd, char * buffer, int size); */
@@ -46,4 +44,19 @@ ENTRY(write)
     
     popl %ebx
 
-    jmp err_handling
+    call err_handling
+
+    movl %ebp, %esp
+    popl %ebp
+    ret
+
+/* int gettime(); */
+ENTRY(gettime)
+    pushl %ebp
+    movl %esp, %ebp
+    movl $10, %eax
+    call syscall_sysenter
+    call err_handling
+    movl %ebp, %esp
+    popl %ebp
+    ret

@@ -101,7 +101,7 @@ void enable_int(void)
       "call delay\n\t"
       "sti"
       :                 /*no output*/
-      : "i"(0b11111101) /* 0xFF = 11111111 -> all bits disabled */
+      : "i"(0b11111100) /* 0xFF = 11111111 -> all bits disabled */
       : "%al");
 }
 

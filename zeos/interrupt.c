@@ -8,6 +8,7 @@
 #include <io.h>
 #include <entry.h>
 #include "kernelUtils.h"
+#include "global.h"
 
 #include <zeos_interrupt.h>
 
@@ -42,6 +43,13 @@ void keyboard_routine()
     printc_xy(70, 20, c);
   }
 }
+
+void clock_routine()
+{
+  ++zeos_ticks;
+  zeos_show_clock();
+}
+
 void setInterruptHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
 {
   /***********************************************************************/
@@ -103,6 +111,7 @@ void setIdt()
 
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(33, keyboard_handler, 0);
+  setInterruptHandler(32, clock_handler, 0);
 
   /* INTERRUPTIONS OF EXCEPTIONS */
   setTrapHandler(0x80, (void *)system_call_handler, 3);

@@ -13,6 +13,7 @@
 
 #include <sched.h>
 #include "errno.h"
+#include "global.h"
 
 #define LECTURA 0
 #define ESCRIPTURA 1
@@ -62,4 +63,9 @@ int sys_write(int fd, char *buff, int size)
   if (copy_from_user(buff, message, size) == -1)
     return -EINTR;
   return sys_write_console(message, size);
+}
+
+unsigned long sys_gettime()
+{
+  return zeos_ticks;
 }
