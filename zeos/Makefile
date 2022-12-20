@@ -34,7 +34,6 @@ SYSOBJ = \
 	utils.o \
 	hardware.o \
 	list.o \
-	errno.o\
 	
 
 LIBZEOS = -L . -l zeos
@@ -64,7 +63,7 @@ bootsect.o: bootsect.s
 bootsect.s: bootsect.S
 	$(CPP) $(ASMFLAGS) -traditional $< -o $@
 
-entry.s: entry.S $(INCLUDEDIR)/asm.h $(INCLUDEDIR)/segment.h
+entry.s: entry.S $(INCLUDEDIR)/asm.h $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/errno.h
 	$(CPP) $(ASMFLAGS) -o $@ $<
 
 sys_call_table.s: sys_call_table.S $(INCLUDEDIR)/asm.h $(INCLUDEDIR)/segment.h
@@ -80,11 +79,11 @@ io.o:io.c $(INCLUDEDIR)/io.h
 
 sched.o:sched.c $(INCLUDEDIR)/sched.h
 
-libc.o:libc.c $(INCLUDEDIR)/libc.h
+libc.o:libc.c $(INCLUDEDIR)/libc.h $(INCLUDEDIR)/errno.h $(INCLUDEDIR)/errnomsg.h
 
 mm.o:mm.c $(INCLUDEDIR)/types.h $(INCLUDEDIR)/mm.h
 
-sys.o:sys.c $(INCLUDEDIR)/devices.h
+sys.o:sys.c $(INCLUDEDIR)/devices.h $(INCLUDEDIR)/errno.h
 
 utils.o:utils.c $(INCLUDEDIR)/utils.h
 
@@ -93,8 +92,6 @@ system.o:system.c $(INCLUDEDIR)/hardware.h system.lds $(SYSOBJ) $(INCLUDEDIR)/se
 
 Wrapper.s: Wrapper.S
 	$(CPP) $(ASMFLAGS) -o $@ $<
-
-errno.o: errno.c $(INCLUDEDIR)/errno.h $(INCLUDEDIR)/errnomsg.h
 
 system: system.o system.lds $(SYSOBJ)
 	$(LD) $(LDFLAGS) -T system.lds -o $@ $< $(SYSOBJ) $(LIBZEOS)

@@ -5,6 +5,8 @@
 #include <libc.h>
 
 #include <types.h>
+#include "errno.h"
+#include "errnomsg.h"
 
 int errno;
 
@@ -47,4 +49,15 @@ int strlen(char *a)
     i++;
 
   return i;
+}
+
+void perror()
+{
+  char *str;
+  if (errno < 140)
+    str = errnomsg[errno];
+  else
+    str = "Internal error";
+
+  write(1, str, strlen(str));
 }

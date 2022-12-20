@@ -2,7 +2,6 @@
 #define _ERRNO_MSG_
 
 char *errnomsg[] = {
-    "",
     "Not super-user",
     "No such file or directory",
     "No such process",

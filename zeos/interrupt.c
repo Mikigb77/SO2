@@ -36,7 +36,7 @@ void keyboard_routine()
   if (c & 0x80)
   {
     c = char_map[c & 127];
-    if (c == '\n')
+    if (c == 0)
       c = 'C';
     printc_xy(70, 20, c);
   }
@@ -95,6 +95,9 @@ void setIdt()
 
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(33, keyboard_handler, 0);
+
+  /* INTERRUPTIONS OF EXCEPTIONS */
+  // setTrapHandler(0x80, (void *)system_call_handler, 3);
 
   set_idt_reg(&idtR);
 }

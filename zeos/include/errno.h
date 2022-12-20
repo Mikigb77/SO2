@@ -1,8 +1,6 @@
 #ifndef __ERRNO_H
 #define __ERRNO_H
 
-char *__geterrno(int err);
-
 #define EPERM 1             /* Not super-user */
 #define ENOENT 2            /* No such file or directory */
 #define ESRCH 3             /* No such process */
