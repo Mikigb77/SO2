@@ -9,6 +9,7 @@
 #include <entry.h>
 #include "kernelUtils.h"
 #include "global.h"
+#include <sched.h>
 
 #include <zeos_interrupt.h>
 

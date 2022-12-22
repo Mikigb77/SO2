@@ -7,16 +7,15 @@
 #include <io.h>
 #include <list.h>
 #include "global.h"
+#include "kernelUtils.h"
 
 union task_union task[NR_TASKS]
 	__attribute__((__section__(".data.task")));
 
-#if 0
 struct task_struct *list_head_to_task_struct(struct list_head *l)
 {
-  return list_entry( l, struct task_struct, list);
+	return list_entry(l, struct task_struct, list);
 }
-#endif
 
 extern struct list_head blocked;
 
@@ -64,10 +63,24 @@ void init_idle(void)
 	union task_union *tu = (union task_union *)t;
 	t->PID = 0;
 	allocate_DIR(t);
+	tu->stack[KERNEL_STACK_SIZE - 1] = (unsigned long)&cpu_idle;
+	tu->stack[KERNEL_STACK_SIZE - 2] = 0;
+	t->kernel_ebp = (int)&(tu->stack[KERNEL_STACK_SIZE - 2]);
+	idle_task = t;
 }
 
 void init_task1(void)
 {
+	struct list_head *l = list_first(&freequeue);
+	list_del(l);
+	struct task_struct *t = list_head_to_task_struct(l);
+	union task_union *tu = (union task_union *)t;
+	t->PID = get_pid();
+	allocate_DIR(t);
+	set_user_pages(t);
+	tss.esp0 = (DWord) & (tu->stack[KERNEL_STACK_SIZE]);
+	setMSR(0x175, (unsigned long)&(tu->stack[KERNEL_STACK_SIZE]));
+	set_cr3(t->dir_pages_baseAddr);
 }
 
 void init_queues()
@@ -96,4 +109,22 @@ struct task_struct *current()
 		"movl %%esp, %0"
 		: "=g"(ret_value));
 	return (struct task_struct *)(ret_value & 0xfffff000);
+}
+
+/* CALLED FROM THE TASK_SWITCH IN kernelUtils.S */
+void inner_task_switch(union task_union *new)
+{
+
+	page_table_entry *pt_new = get_DIR(&new->task);
+
+	/* now the context switch */
+	// update system stack:
+	tss.esp0 = (int)&(new->stack[KERNEL_STACK_SIZE]);
+	setMSR(0x175, (unsigned long)&(new->stack[KERNEL_STACK_SIZE]));
+
+	// update the page table pointed by reg cr3:
+	set_cr3(pt_new);
+
+	// change the stack:
+	switch_stack(&current()->kernel_ebp, new->task.kernel_ebp);
 }

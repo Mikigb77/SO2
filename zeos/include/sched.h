@@ -22,6 +22,7 @@ enum state_t
 struct task_struct
 {
   int PID; /* Process ID. This MUST be the first field of the struct. */
+  int kernel_ebp;
   page_table_entry *dir_pages_baseAddr;
   struct list_head list;
 };

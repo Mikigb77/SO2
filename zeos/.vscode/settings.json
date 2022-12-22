@@ -1,4 +1,7 @@
 {
   "github.gitAuthentication": true,
-  "C_Cpp.errorSquiggles": "disabled"
+  "C_Cpp.errorSquiggles": "disabled",
+  "files.associations": {
+    "*.tcc": "c"
+  }
 }
