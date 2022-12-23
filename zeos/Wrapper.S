@@ -32,20 +32,13 @@ ENTRY(write)
     pushl %ebp
     movl %esp, %ebp
     pushl %ebx
-
     movl 8(%ebp), %ebx
     movl 12(%ebp), %ecx
     movl 16(%ebp), %edx
-
-    /* passing the syscall number */
     movl $4, %eax
-
     call syscall_sysenter
-    
     popl %ebx
-
     call err_handling
-
     movl %ebp, %esp
     popl %ebp
     ret
@@ -55,6 +48,28 @@ ENTRY(gettime)
     pushl %ebp
     movl %esp, %ebp
     movl $10, %eax
+    call syscall_sysenter
+    call err_handling
+    movl %ebp, %esp
+    popl %ebp
+    ret
+
+/* int getpid() */
+ENTRY(getpid)
+    pushl %ebp
+    movl %esp, %ebp
+    movl $20, %eax
+    call syscall_sysenter
+    call err_handling
+    movl %ebp, %esp
+    popl %ebp
+    ret
+
+/* int fork() */
+ENTRY(fork)
+    pushl %ebp
+    movl %esp, %ebp
+    movl $2, %eax
     call syscall_sysenter
     call err_handling
     movl %ebp, %esp

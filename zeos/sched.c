@@ -75,7 +75,7 @@ void init_task1(void)
 	list_del(l);
 	struct task_struct *t = list_head_to_task_struct(l);
 	union task_union *tu = (union task_union *)t;
-	t->PID = get_pid();
+	t->PID = get_new_pid();
 	allocate_DIR(t);
 	set_user_pages(t);
 	tss.esp0 = (DWord) & (tu->stack[KERNEL_STACK_SIZE]);
@@ -127,4 +127,40 @@ void inner_task_switch(union task_union *new)
 
 	// change the stack:
 	switch_stack(&current()->kernel_ebp, new->task.kernel_ebp);
+}
+
+int get_quantum(struct task_struct *t)
+{
+	return t->quantum;
+}
+void set_quantum(struct task_struct *t, int new_quantum)
+{
+	t->quantum = new_quantum;
+}
+
+void update_sched_data_rr()
+{
+	--quantum;
+}
+
+int needs_sched_rr()
+{
+	if (quantum <= 0)
+		return true;
+	return false;
+}
+
+void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue)
+{
+}
+
+void sched_next_rr()
+{
+}
+
+void schedule()
+{
+	update_sched_data_rr();
+	if (needs_sched_rr())
+		sched_next_rr();
 }

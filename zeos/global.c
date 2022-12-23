@@ -14,8 +14,9 @@ struct task_struct *idle_task;
 // aux:
 
 int global_pid = 0;
+int quantum;
 
-int get_pid()
+int get_new_pid()
 {
     return ++global_pid;
 }
