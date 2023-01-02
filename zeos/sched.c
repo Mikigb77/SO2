@@ -62,6 +62,7 @@ void init_idle(void)
 	struct task_struct *t = list_head_to_task_struct(l);
 	union task_union *tu = (union task_union *)t;
 	t->PID = 0;
+	t->quantum = FULL_QUANTUM;
 	allocate_DIR(t);
 	tu->stack[KERNEL_STACK_SIZE - 1] = (unsigned long)&cpu_idle;
 	tu->stack[KERNEL_STACK_SIZE - 2] = 0;
@@ -76,6 +77,7 @@ void init_task1(void)
 	struct task_struct *t = list_head_to_task_struct(l);
 	union task_union *tu = (union task_union *)t;
 	t->PID = get_new_pid();
+	t->quantum = FULL_QUANTUM;
 	allocate_DIR(t);
 	set_user_pages(t);
 	tss.esp0 = (DWord) & (tu->stack[KERNEL_STACK_SIZE]);
@@ -152,10 +154,39 @@ int needs_sched_rr()
 
 void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue)
 {
+	if (dst_queue == &readyqueue)
+	{
+		t->state = ST_READY;
+		if (t != idle_task)
+			list_add(&t->list, &readyqueue);
+	}
+	else if (dst_queue == NULL)
+	{
+		t->state = ST_RUN;
+	}
 }
 
 void sched_next_rr()
 {
+	struct task_struct *n;
+	if (!list_empty(&readyqueue))
+	{
+		struct list_head *l = list_first(&readyqueue);
+		list_del(l);
+		n = list_head_to_task_struct(l);
+	}
+	else
+		n = idle_task;
+	// check if we are changeing the idletask for itself:
+	if (n == current())
+		return;
+	union task_union *nu = (union task_union *)n;
+
+	update_process_state_rr(current(), &readyqueue);
+	update_process_state_rr(n, NULL);
+
+	quantum = get_quantum(n);
+	task_switch(nu);
 }
 
 void schedule()

@@ -75,3 +75,14 @@ ENTRY(fork)
     movl %ebp, %esp
     popl %ebp
     ret
+
+/* void exit() */
+ENTRY (exit)
+    pushl %ebp
+    movl %esp, %ebp
+    movl $1, %eax
+    call syscall_sysenter
+    call err_handling
+    movl %ebp, %esp
+    popl %ebp
+    ret

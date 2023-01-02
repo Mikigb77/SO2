@@ -102,6 +102,8 @@ int sys_fork()
   // get the new PID:
   c->PID = get_new_pid();
   PID = c->PID;
+  // set the quantum:
+  c->quantum = p->quantum;
 
   // make the kernel_ebp to pint to the stack of the child:
   int k_ebp = (int)get_ebp();
@@ -125,6 +127,25 @@ int sys_fork()
 
 void sys_exit()
 {
+  struct task_struct *t = current();
+  page_table_entry *p = get_PT(t);
+  /*delete kernel:*/
+  for (int i = 0; i < NUM_PAG_KERNEL; ++i)
+  {
+    del_ss_pag(p, i);
+  }
+  /*del code:*/
+  for (int i = PAG_LOG_INIT_CODE; i < PAG_LOG_INIT_CODE + NUM_PAG_CODE; ++i)
+  {
+    del_ss_pag(p, i);
+  }
+  /*del data:*/
+  for (int i = PAG_LOG_INIT_DATA; i < PAG_LOG_INIT_DATA + NUM_PAG_DATA; ++i)
+  {
+    free_frame(get_frame(p, i));
+    del_ss_pag(p, i);
+  }
+  sched_next_rr();
 }
 
 int sys_write(int fd, char *buff, int size)
