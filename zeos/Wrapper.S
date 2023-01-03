@@ -77,10 +77,23 @@ ENTRY(fork)
     ret
 
 /* void exit() */
-ENTRY (exit)
+ENTRY(exit)
     pushl %ebp
     movl %esp, %ebp
     movl $1, %eax
+    call syscall_sysenter
+    call err_handling
+    movl %ebp, %esp
+    popl %ebp
+    ret
+    
+/* int get_stats(int pid, struct stats *st) */
+ENTRY(get_stats)
+    pushl %ebp
+    movl %esp, %ebp
+    movl 8(%ebp), %ebx
+    movl 12(%ebp), %ecx
+    movl $35, %eax
     call syscall_sysenter
     call err_handling
     movl %ebp, %esp

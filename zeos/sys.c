@@ -129,22 +129,14 @@ void sys_exit()
 {
   struct task_struct *t = current();
   page_table_entry *p = get_PT(t);
-  /*delete kernel:*/
-  for (int i = 0; i < NUM_PAG_KERNEL; ++i)
-  {
-    del_ss_pag(p, i);
-  }
-  /*del code:*/
-  for (int i = PAG_LOG_INIT_CODE; i < PAG_LOG_INIT_CODE + NUM_PAG_CODE; ++i)
-  {
-    del_ss_pag(p, i);
-  }
   /*del data:*/
   for (int i = PAG_LOG_INIT_DATA; i < PAG_LOG_INIT_DATA + NUM_PAG_DATA; ++i)
   {
     free_frame(get_frame(p, i));
     del_ss_pag(p, i);
   }
+  list_add_tail(&t->list, &freequeue);
+  t->PID = -1;
   sched_next_rr();
 }
 
@@ -166,4 +158,10 @@ int sys_write(int fd, char *buff, int size)
 unsigned long sys_gettime()
 {
   return zeos_ticks;
+}
+
+int sys_get_stats(int pid, struct stats *st)
+{
+  printk("\nHola\n");
+  return 0;
 }

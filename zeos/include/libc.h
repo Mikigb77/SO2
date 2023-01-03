@@ -26,6 +26,8 @@ void perror();
 
 int gettime();
 
+int get_stats(int pid, struct stats *st);
+
 /*********************************************/
 /*********************AUX*********************/
 
@@ -35,6 +37,13 @@ int gettime();
  * @param buff char* to print
  */
 void printf(char *buff);
+
+/**
+ * @brief prints all the stats
+ *
+ * @param st pointer to the stats struct to print
+ */
+void print_stats(struct stats *st);
 /*********************************************/
 
 #endif /* __LIBC_H__ */

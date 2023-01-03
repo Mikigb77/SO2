@@ -181,8 +181,8 @@ void sched_next_rr()
 	if (n == current())
 		return;
 	union task_union *nu = (union task_union *)n;
-
-	update_process_state_rr(current(), &readyqueue);
+	if (current()->PID != -1)
+		update_process_state_rr(current(), &readyqueue);
 	update_process_state_rr(n, NULL);
 
 	quantum = get_quantum(n);

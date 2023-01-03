@@ -9,8 +9,6 @@
 #include <entry.h>
 #include "kernelUtils.h"
 #include "global.h"
-#include "list.h" //to delete
-#include "libc.h" //to delete
 #include <sched.h>
 
 #include <zeos_interrupt.h>
@@ -47,30 +45,9 @@ void keyboard_routine()
   }
 }
 
-/**********************************/
-/*************AUX******************/
-int prev_proc = 0;
-void printReadyProc()
-{
-  char b[240];
-  int i;
-  struct list_head *p;
-  list_for_each(p, &readyqueue)
-  {
-    ++i;
-  }
-  if (i != prev_proc)
-  {
-    itoa(i, b);
-    printc_xy(20, 20, b[0]);
-    prev_proc = i;
-  }
-}
-/**********************************/
-
 void clock_routine()
 {
-  printReadyProc(); // DELETE!!!
+
   schedule();
   ++zeos_ticks;
   zeos_show_clock();

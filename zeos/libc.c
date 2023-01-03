@@ -68,4 +68,34 @@ void printf(char *buff)
   if (write(1, buff, strlen(buff)) < 0)
     perror();
 }
+
+void print_stats(struct stats *st)
+{
+  printf("\nSTATS:\n");
+  int vs[7];
+  char *vb[7];
+  vb[0] = "user_ticks";
+  vs[0] = (int)st->user_ticks;
+  vb[1] = "system_ticks";
+  vs[1] = (int)st->system_ticks;
+  vb[2] = "blocked_ticks";
+  vs[2] = (int)st->blocked_ticks;
+  vb[3] = "ready_ticks";
+  vs[3] = (int)st->ready_ticks;
+  vb[4] = "elapsed_total_ticks";
+  vs[4] = (int)st->elapsed_total_ticks;
+  vb[5] = "total_trans";
+  vs[5] = (int)st->total_trans; /* Number of times the process has got the CPU: READY->RUN transitions */
+  vb[6] = "remaining_ticks";
+  vs[6] = (int)st->remaining_ticks;
+  char buff[2000];
+  for (int i = 0; i < 7; ++i)
+  {
+    printf(vb[i]);
+    printf(": ");
+    itoa(vs[i], buff);
+    printf(buff);
+    printf("\n");
+  }
+}
 /*********************************************/
