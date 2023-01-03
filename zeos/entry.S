@@ -71,15 +71,27 @@
 
 ENTRY(keyboard_handler)
       SAVE_ALL
+      pushl %eax
+      call user_to_system
+      popl %eax
       EOI
       call keyboard_routine
+      pushl %eax
+      call system_to_user
+      popl %eax
       RESTORE_ALL
       iret
 
 ENTRY(clock_handler)
       SAVE_ALL
+      pushl %eax
+      call user_to_system
+      popl %eax
       EOI
       call clock_routine
+      pushl %eax
+      call system_to_user
+      popl %eax
       RESTORE_ALL
       iret
 

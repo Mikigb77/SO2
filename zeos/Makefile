@@ -36,6 +36,7 @@ SYSOBJ = \
 	list.o \
 	kernelUtils.o \
 	global.o \
+	p_stats.o \
 	
 
 LIBZEOS = -L . -l zeos
@@ -93,6 +94,8 @@ kernelUtils.s: kernelUtils.S $(INCLUDEDIR)/asm.h $(INCLUDEDIR)/segment.h
 	$(CPP) $(ASMFLAGS) -o $@ $<
 
 global.o: global.c $(INCLUDEDIR)/global.h
+
+p_stats.o: p_stats.c $(INCLUDEDIR)/p_stats.h $(INCLUDEDIR)/utils.h
 
 
 system.o:system.c $(INCLUDEDIR)/hardware.h system.lds $(SYSOBJ) $(INCLUDEDIR)/segment.h $(INCLUDEDIR)/types.h $(INCLUDEDIR)/interrupt.h $(INCLUDEDIR)/system.h $(INCLUDEDIR)/sched.h $(INCLUDEDIR)/mm.h $(INCLUDEDIR)/io.h $(INCLUDEDIR)/mm_address.h 

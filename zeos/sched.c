@@ -8,6 +8,7 @@
 #include <list.h>
 #include "global.h"
 #include "kernelUtils.h"
+#include "p_stats.h"
 
 union task_union task[NR_TASKS]
 	__attribute__((__section__(".data.task")));
@@ -63,6 +64,7 @@ void init_idle(void)
 	union task_union *tu = (union task_union *)t;
 	t->PID = 0;
 	t->quantum = FULL_QUANTUM;
+	init_stats(&t->stats);
 	allocate_DIR(t);
 	tu->stack[KERNEL_STACK_SIZE - 1] = (unsigned long)&cpu_idle;
 	tu->stack[KERNEL_STACK_SIZE - 2] = 0;
@@ -79,6 +81,7 @@ void init_task1(void)
 	t->PID = get_new_pid();
 	t->quantum = FULL_QUANTUM;
 	t->state = ST_READY;
+	init_stats(&t->stats);
 	allocate_DIR(t);
 	set_user_pages(t);
 	tss.esp0 = (DWord) & (tu->stack[KERNEL_STACK_SIZE]);
@@ -161,6 +164,7 @@ void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue)
 	{
 		if (t->state == ST_BLOCKED)
 			list_del(&t->list);
+		update_stats(&(t->stats.system_ticks), &(t->stats.elapsed_total_ticks));
 		t->state = ST_READY;
 		list_add(&t->list, &readyqueue);
 	}
@@ -198,6 +202,10 @@ void sched_next_rr()
 	update_process_state_rr(n, NULL);
 
 	quantum = get_quantum(n);
+
+	update_stats(&(current()->stats.system_ticks), &(current()->stats.elapsed_total_ticks));
+	update_stats(&(n->stats.ready_ticks), &(n->stats.elapsed_total_ticks));
+	n->stats.total_trans++;
 	task_switch(nu);
 }
 

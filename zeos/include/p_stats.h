@@ -1,28 +1,20 @@
 #ifndef P_STATS_H_
 #define P_STATS_H_
 #include <stats.h>
-#include <sched.h>
-enum stats_
-{
-    usr_to_sys,
-    sys_to_usr,
-    sys_to_red,
-    red_to_sys
-};
 
 /**
- * @brief initialize all stats info
+ * @brief initializes all stats
  *
- * @param t pointer to the task struct of the task that will get all stats initialized
+ * @param s pointer to the task struct to initialize
  */
-void init_stats(struct task_struct *t);
+void init_stats(struct stats *s);
 
 /**
- * @brief updates all the stats of the process
+ * @brief updates the state ticks and the total ticks up to the state change that triggered the function
  *
- * @param dir the direction that it goes: usr_to_sys(0), sys_to_usr(1), sys_to_red(2) or red_to_sys(3)
- *
+ * @param v value to update (the state_ticks_counter)
+ * @param elapsed the time up to the last state change
  */
-void update_stats(int dir);
+void update_stats(unsigned long *v, unsigned long *elapsed);
 
 #endif

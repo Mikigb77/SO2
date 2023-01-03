@@ -1,27 +1,20 @@
 #include "p_stats.h"
+#include "utils.h"
 
-void init_stats(struct task_struct *t)
+void init_stats(struct stats *s)
 {
-    struct stats *st = &t->stats;
+    s->user_ticks = 0;
+    s->system_ticks = 0;
+    s->blocked_ticks = 0;
+    s->ready_ticks = 0;
+    s->elapsed_total_ticks = get_ticks();
+    s->total_trans = 0;
+    s->remaining_ticks = get_ticks();
 }
 
-void update_stats(int dir)
+void update_stats(unsigned long *v, unsigned long *elapsed)
 {
-    switch (dir)
-    {
-    case usr_to_system:
-        update_usr_to_sys();
-        break;
-    case sys_to_usr:
-        update_sys_to_usr();
-        break;
-    case sys_to_red:
-        update_sys_to_red();
-        break;
-    case red_to_sys:
-        update_sys_to_red();
-        break;
-    default:
-        break;
-    }
+    unsigned long curr_ticks = get_ticks();
+    *v += curr_ticks - *elapsed;
+    *elapsed = curr_ticks;
 }

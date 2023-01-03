@@ -12,6 +12,7 @@
 #include "errno.h"
 #include "global.h"
 #include "kernelUtils.h"
+#include "p_stats.h"
 
 #define LECTURA 0
 #define ESCRIPTURA 1
@@ -28,6 +29,16 @@ int check_fd(int fd, int permissions)
 int sys_ni_syscall()
 {
   return -38; /*ENOSYS*/
+}
+
+void user_to_system(void)
+{
+  update_stats(&(current()->stats.user_ticks), &(current()->stats.elapsed_total_ticks));
+}
+
+void system_to_user(void)
+{
+  update_stats(&(current()->stats.system_ticks), &(current()->stats.elapsed_total_ticks));
 }
 
 int sys_getpid()
@@ -102,8 +113,9 @@ int sys_fork()
   // get the new PID:
   c->PID = get_new_pid();
   PID = c->PID;
-  // set the quantum:
+  // set the quantum and the stats:
   c->quantum = p->quantum;
+  init_stats(&c->stats);
 
   // make the kernel_ebp to pint to the stack of the child:
   int k_ebp = (int)get_ebp();
@@ -163,6 +175,21 @@ unsigned long sys_gettime()
 
 int sys_get_stats(int pid, struct stats *st)
 {
-  printk("\nHola\n");
-  return 0;
+  int i;
+
+  if (!access_ok(VERIFY_WRITE, st, sizeof(struct stats)))
+    return -EFAULT;
+
+  if (pid < 0)
+    return -EINVAL;
+  for (i = 0; i < NR_TASKS; i++)
+  {
+    if (task[i].task.PID == pid)
+    {
+      task[i].task.stats.remaining_ticks = quantum;
+      copy_to_user(&(task[i].task.stats), st, sizeof(struct stats));
+      return 0;
+    }
+  }
+  return -ESRCH; /*ESRCH */
 }
