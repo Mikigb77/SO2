@@ -120,6 +120,7 @@ int sys_fork()
   // now we are set for the task switch!
 
   // finaly we addit to the ready list:
+  c->state = ST_READY;
   list_add(&c->list, &readyqueue);
 
   return PID;

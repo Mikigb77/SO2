@@ -7,6 +7,17 @@ int pid;
 int __attribute__((__section__(".text.main")))
 main(void)
 {
+
+  pid = fork();
+  if (pid == 0)
+  {
+    printf("\nson\n");
+    exit();
+  }
+  else
+  {
+    printf("\nparent\n");
+  }
   clean_screen();
   struct stats st;
   struct stats *stp = &st;

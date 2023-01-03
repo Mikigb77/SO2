@@ -78,6 +78,7 @@ void init_task1(void)
 	union task_union *tu = (union task_union *)t;
 	t->PID = get_new_pid();
 	t->quantum = FULL_QUANTUM;
+	t->state = ST_READY;
 	allocate_DIR(t);
 	set_user_pages(t);
 	tss.esp0 = (DWord) & (tu->stack[KERNEL_STACK_SIZE]);
@@ -154,15 +155,27 @@ int needs_sched_rr()
 
 void update_process_state_rr(struct task_struct *t, struct list_head *dst_queue)
 {
+	if (t == idle_task)
+		return;
 	if (dst_queue == &readyqueue)
 	{
+		if (t->state == ST_BLOCKED)
+			list_del(&t->list);
 		t->state = ST_READY;
-		if (t != idle_task)
-			list_add(&t->list, &readyqueue);
+		list_add(&t->list, &readyqueue);
 	}
 	else if (dst_queue == NULL)
 	{
+		if (t->state == ST_READY || t->state == ST_BLOCKED)
+			list_del(&t->list);
 		t->state = ST_RUN;
+	}
+	else if (dst_queue == &blocked)
+	{
+		if (t->state == ST_READY)
+			list_del(&t->list);
+		t->state = ST_BLOCKED;
+		list_add(&t->list, &blocked);
 	}
 }
 
@@ -172,7 +185,6 @@ void sched_next_rr()
 	if (!list_empty(&readyqueue))
 	{
 		struct list_head *l = list_first(&readyqueue);
-		list_del(l);
 		n = list_head_to_task_struct(l);
 	}
 	else
