@@ -104,9 +104,9 @@ void clean_screen()
   int cols = 80;
   int rows = 25;
 
-  for (int i = 0; i < 25; ++i)
+  for (int i = 0; i < rows; ++i)
   {
-    for (int j = 0; j < 80; ++j)
+    for (int j = 0; j < cols; ++j)
       printf(" ");
     printf("\n");
   }
