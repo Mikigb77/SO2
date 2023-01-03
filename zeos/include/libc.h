@@ -44,6 +44,12 @@ void printf(char *buff);
  * @param st pointer to the stats struct to print
  */
 void print_stats(struct stats *st);
+
+/**
+ * @brief cleans the screen
+ *
+ */
+void clean_screen();
 /*********************************************/
 
 #endif /* __LIBC_H__ */

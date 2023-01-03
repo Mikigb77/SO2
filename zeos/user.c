@@ -7,6 +7,7 @@ int pid;
 int __attribute__((__section__(".text.main")))
 main(void)
 {
+  clean_screen();
   struct stats st;
   struct stats *stp = &st;
   get_stats(getpid(), stp);

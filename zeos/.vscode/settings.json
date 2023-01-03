@@ -2,6 +2,7 @@
   "github.gitAuthentication": true,
   "C_Cpp.errorSquiggles": "disabled",
   "files.associations": {
-    "*.tcc": "c"
+    "*.tcc": "c",
+    "types.h": "c"
   }
 }

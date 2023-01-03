@@ -98,4 +98,17 @@ void print_stats(struct stats *st)
     printf("\n");
   }
 }
+
+void clean_screen()
+{
+  int cols = 80;
+  int rows = 25;
+
+  for (int i = 0; i < 25; ++i)
+  {
+    for (int j = 0; j < 80; ++j)
+      printf(" ");
+    printf("\n");
+  }
+}
 /*********************************************/
