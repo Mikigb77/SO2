@@ -20,3 +20,10 @@ int get_new_pid()
 {
     return ++global_pid;
 }
+
+///@brief struct for threads
+struct thread
+{
+    struct task_struct task;
+    char *stack;
+};

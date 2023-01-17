@@ -99,3 +99,16 @@ ENTRY(get_stats)
     movl %ebp, %esp
     popl %ebp
     ret
+
+/* int clone(void (*fn)(void), char *stack); */
+ENTRY(clone)
+    pushl %ebp
+    movl %esp, %ebp
+    movl 8(%ebp), %ebx
+    movl 12(%ebp), %ecx
+    movl $120, %eax
+    call syscall_sysenter
+    call err_handling
+    movl %ebp, %esp
+    popl %ebp
+    ret
